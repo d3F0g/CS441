@@ -1,6 +1,6 @@
 import socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("localhost", 8000))
+server.bind(("localhost", 8005))
 server.listen(2)
 server_ip = "92.10.10.10"
 server_mac = "00:00:0A:BB:28:FC"

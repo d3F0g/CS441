@@ -9,7 +9,7 @@ router_send.bind(("localhost", 8200))
 
 router_mac = "05:10:0A:CB:24:EF"
 
-server = ("localhost", 8000)
+server = ("localhost", 8005)
 
 client1_ip = "92.10.10.15"
 client1_mac = "32:04:0A:EF:19:CF"
@@ -38,7 +38,7 @@ arp_table_socket = {client1_ip : client1, client2_ip : client2, client3_ip : cli
 arp_table_mac = {client1_ip : client1_mac, client2_ip : client2_mac, client3_ip : client3_mac}
 router.connect(server) 
 while True:
-received_message = router.recv(1024)
+    received_message = router.recv(1024)
     received_message =  received_message.decode("utf-8")
     
     source_mac = received_message[0:17]

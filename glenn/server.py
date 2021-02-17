@@ -1,4 +1,8 @@
 import socket
+client1_ip = "0x1A"
+client2_ip = "0x2A"
+client3_ip = "0x2B"
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(("localhost", 8005))
 server.listen(2)
@@ -16,19 +20,25 @@ while True:
 while True:
     ethernet_header = ""
     IP_header = ""
+    protocol = ""
+    datalength = ""
     
     message = input("\nEnter the text message to send: ")
-    destination_ip = input("Enter the IP of the clients to send the message to:\n1. 92.10.10.15\n2. 92.10.10.20\n3. 92.10.10.25\n")
-    if(destination_ip == "92.10.10.15" or destination_ip == "92.10.10.20" or destination_ip == "92.10.10.25"):
+    destination_ip = input("Enter the IP of the clients to send the message to:\n1. " + client1_ip +"\n2. " + client2_ip +"\n3. " + client3_ip +"\n")
+    protocol = input("So what you want to do with this message? ")
+    if(destination_ip == "0x1A" or destination_ip == "0x2A" or destination_ip == "0x2B"):
         source_ip = server_ip
-        IP_header = IP_header + source_ip + destination_ip
+        IP_header = IP_header + "|" + source_ip + "|" + destination_ip
         
         source_mac = server_mac
         destination_mac = router_mac 
-        ethernet_header = ethernet_header + source_mac + destination_mac
+        ethernet_header = ethernet_header + "|" + source_mac + "|" + destination_mac
         
-        packet = ethernet_header + IP_header + message
-        
+        # packet = ethernet_header + IP_header + message
+        datalength = len(message)
+
+        packet = ethernet_header + IP_header +"|" + protocol +"|" + str(datalength) +"|" + message
+        print(packet)
         routerConnection.send(bytes(packet, "utf-8"))  
     else:
         print("Wrong client IP inputted")

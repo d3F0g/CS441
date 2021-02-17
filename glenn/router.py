@@ -11,11 +11,11 @@ router_mac = "05:10:0A:CB:24:EF"
 
 server = ("localhost", 8005)
 
-client1_ip = "92.10.10.15"
+client1_ip = "0x1A"
 client1_mac = "32:04:0A:EF:19:CF"
-client2_ip = "92.10.10.20"
+client2_ip = "0x1B"
 client2_mac = "10:AF:CB:EF:19:CF"
-client3_ip = "92.10.10.25"
+client3_ip = "0x2B"
 client3_mac = "AF:04:67:EF:19:DA"
 router_send.listen(4)
 client1 = None
@@ -42,23 +42,49 @@ print(router_mac)
 while True:
     received_message = router.recv(1024)
     received_message =  received_message.decode("utf-8")
+    # print(received_message)
+
+    fragments = received_message.split("|")
     
-    source_mac = received_message[0:17]
-    destination_mac = received_message[17:34]
-    source_ip = received_message[34:45]
-    destination_ip =  received_message[45:56]
-    message = received_message[56:]
+    print("fragments 0 is: " + fragments[0])
+    print("source mac is: " + fragments[1])
+    print("destimation mac is: " + fragments[2])
+    print("source ip is: " + fragments[3])
+    print("destination ip is: " + fragments[4])
+    print("protocol is: " + fragments[5])
+    print("datalength is: " + fragments[6])
+    print("message is: " + fragments[7])
+
+    # source_ip = ""
+    # source_mac = ""
+    # destination_ip = ""
+    # destination_mac = ""
+
+    source_mac = fragments[1]
+    destination_mac = fragments[2]
+    source_ip = fragments[3]
+    destination_ip =  fragments[4]
+    protocol = fragments[5]
+    datalength = fragments[6]
+    message = fragments[7]
     
     print("The packed received:\n Source MAC address: {source_mac}, Destination MAC address: {destination_mac}".format(source_mac=source_mac, destination_mac=destination_mac))
     print("\nSource IP address: {source_ip}, Destination IP address: {destination_ip}".format(source_ip=source_ip, destination_ip=destination_ip))
     print("\nMessage: " + message)
+    print()
+    
+    ethernet_header = router_mac + "|" + arp_table_mac[destination_ip]
+    print("ethernet header: " + ethernet_header)
+    IP_header = source_ip + "|" + destination_ip
+    print("ip header: " + IP_header)
+    packet = ethernet_header + "|" + IP_header + "|" + protocol + "|" +  datalength + "|" +  message
     
     
-    ethernet_header = router_mac + arp_table_mac[destination_ip]
-    IP_header = source_ip + destination_ip
-    packet = ethernet_header + IP_header + message
+    print("packet: " + packet)
     
     destination_socket = arp_table_socket[destination_ip]
+    
+    print("destination_socket: " + destination_ip)
     
     destination_socket.send(bytes(packet, "utf-8"))
     time.sleep(2)

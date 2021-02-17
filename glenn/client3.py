@@ -1,6 +1,6 @@
 import socket
 import time
-client3_ip = "92.10.10.25"
+client3_ip = "0x2B"
 client3_mac = "AF:04:67:EF:19:DA"
 router = ("localhost", 8200)
 client3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,11 +21,32 @@ while True:
     # data = ethernet_frame_components[4]
 
     received_message = received_message.decode("utf-8")
-    source_mac = received_message[0:17]
-    destination_mac = received_message[17:34]
-    source_ip = received_message[34:45]
-    destination_ip =  received_message[45:56]
-    message = received_message[56:]
+    # source_mac = received_message[0:1]
+    # destination_mac = received_message[1:2]
+    # source_ip = received_message[2:3]
+    # destination_ip =  received_message[3:4]
+    # message = received_message[4:]
+
+    fragments = received_message.split("|")
+    
+    # print("fragments 0 is: " + fragments[0])
+    print("source mac is: " + fragments[1])
+    print("destimation mac is: " + fragments[2])
+    print("source ip is: " + fragments[3])
+    print("destination ip is: " + fragments[4])
+    # print("protocol is: " + fragments[5])
+    # print("datalength is: " + fragments[6])
+    # print("message is: " + fragments[7])
+    source_mac = fragments[1]
+    destination_mac = fragments[2]
+    source_ip = fragments[3]
+    destination_ip =  fragments[4]
+    # protocol = fragments[5]
+    # datalength = fragments[6]
+    # message = fragments[7]
+
+    message = ""
+
     print("\nPacket integrity:\ndestination MAC address matches client 3 MAC address: {mac}".format(mac=(client3_mac == destination_mac)))
     
     print("\ndestination IP address matches client 3 IP address: {mac}".format(mac=(client3_ip == destination_ip)))

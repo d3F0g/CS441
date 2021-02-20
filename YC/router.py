@@ -1,62 +1,78 @@
+# this is the brain that decides the network line
 import socket
-import time
 
-router = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-router.bind(("localhost", 8100))
+r1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+r1.bind((socket.gethostbyname('localhost'), 1234))
+r1.listen(1)
 
-router_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-router_send.bind(("localhost", 8200))
+r2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+r2.bind((socket.gethostbyname('localhost'), 1235))
+r2.listen(2)
 
-router_mac = "05:10:0A:CB:24:EF"
-
-server = ("localhost", 8005)
-
-client1_ip = "92.10.10.15"
-client1_mac = "32:04:0A:EF:19:CF"
-client2_ip = "92.10.10.20"
-client2_mac = "10:AF:CB:EF:19:CF"
-client3_ip = "92.10.10.25"
-client3_mac = "AF:04:67:EF:19:DA"
-router_send.listen(4)
-client1 = None
-client2 = None
-client3 = None
-while (client1 == None or client2 == None or client3 == None):
-    client, address = router_send.accept()
-    
-    if(client1 == None):
-        client1 = client
-        print("Client 1 is online")
-    
-    elif(client2 == None):
-        client2 = client
-        print("Client 2 is online")
-    else:
-        client3 = client
-        print("Client 3 is online")
-arp_table_socket = {client1_ip : client1, client2_ip : client2, client3_ip : client3}
-arp_table_mac = {client1_ip : client1_mac, client2_ip : client2_mac, client3_ip : client3_mac}
-router.connect(server) 
 while True:
-    received_message = router.recv(1024)
-    received_message =  received_message.decode("utf-8")
+    # now our endpoint knows about the OTHER endpoint.
+    clientsocket, address = r1.accept()
+    clientsocket, address = r2.accept()
+
+    print(f"Connection from {address} has been established.")
+
+    r1nodes = ['N1']
+    r2nodes = ['N2', 'N3']
+
+    # ping from N1 to N2
+    eth_frame = "N1R111[N1N205HELLO]" # Ethernet frame should be [source|dest|data length|(source|destination|protocol|5|HELLO)]
+
+    start = False 
+    ip_packet = ""
+
+    if eth_frame[2:4]=="R1":
+
+        #check for nodes inside r1nodes
+        if eth_frame[:2] in r1nodes:
+
+            for char in eth_frame: #extracts the ip packet from the eth frame
+                if char == "]":
+                    start = False # end of "ip packet"
+                if start:
+                    ip_packet += char
+                if char == "[":
+                    start = True #check for start of the "ip packet"
+
+            if ip_packet[2:4] in r2nodes: #if the destination is valid
+
+                eth_frame = "R2" + ip_packet[2:4] + eth_frame[4:] #replaces source to r2, dest to n2
+                # print(eth_frame)
+                # print(ip_packet)
+                clientsocket.send(bytes(eth_frame,"utf-8"))
+            else:
+                print("This is not a registered route1")
+
+        else:
+            print("Node does not exist on this route")
+
+    elif eth_frame[2:4]=="R2":
+        #check for nodes inside r2nodes
+        if eth_frame[:2] in r2nodes:
+
+            for char in eth_frame:
+                if char == "[":
+                    start = True 
+                elif char == "]":
+                    start = False 
+                if start:
+                    ip_packet += char
+
+            if ip_packet[2:4] in r1nodes: 
+                eth_frame = eth_frame.replace(eth_frame[:2], "R1") 
+                eth_frame = eth_frame.replace(eth_frame[2:4], ip_packet[2:4])
+                clientsocket.send(bytes(eth_frame,"utf-8"))
+            else:
+                print("This is not a registered route")
+
+        else:
+            print("Node does not exist on this route")
+
+    else:
+        print("This is not a registered port")
     
-    source_mac = received_message[0:17]
-    destination_mac = received_message[17:34]
-    source_ip = received_message[34:45]
-    destination_ip =  received_message[45:56]
-    message = received_message[56:]
-    
-    print("The packed received:\n Source MAC address: {source_mac}, Destination MAC address: {destination_mac}".format(source_mac=source_mac, destination_mac=destination_mac))
-    print("\nSource IP address: {source_ip}, Destination IP address: {destination_ip}".format(source_ip=source_ip, destination_ip=destination_ip))
-    print("\nMessage: " + message)
-    
-    
-    ethernet_header = router_mac + arp_table_mac[destination_ip]
-    IP_header = source_ip + destination_ip
-    packet = ethernet_header + IP_header + message
-    
-    destination_socket = arp_table_socket[destination_ip]
-    
-    destination_socket.send(bytes(packet, "utf-8"))
-    time.sleep(2)
+    clientsocket.close()

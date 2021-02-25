@@ -22,9 +22,12 @@ while True:
         print(full_msg[5:])
     
     #message-sending component
+    sourcenode = 'N1'
     destroute = 'R2'
     destnode = input("Which node are you sending to? Please Enter N2 or N3")
+    protocol = input("What would you like to do with the message? 0 to ping, 1 to log and 2 to kill.")
     messageinput = input("Please enter your message.")
-    fullmsg = destroute + destnode + messageinput
+    messagelength = len(messageinput)
+    fullmsg = destroute + sourcenode + destnode + protocol + messagelength + '|' + messageinput
 
     #need to send this to router

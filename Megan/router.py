@@ -18,7 +18,35 @@ node3_ip = "0x2B"
 node3_mac = "AF:04:67:EF:19:DA"
 
 while True:
-    # now our endpoint knows about the OTHER endpoint.
+    #router needs a message receiving component
+    #need to pack as ip packet, and THEN pack into ethernet frame
+    #ip packet looks like source-dest-protocol-datalength-data
+    #ethernet packet looks like source-dest-datalength-data
+
+    # incomingmsg = destroute + sourcenode + destnode + protocol + messagelength + '|' +  messageinput
+    incomingmsg = "R2N1N205HELLO"
+
+    #ip packet
+    ip_source = incomingmsg[2:4]
+    ip_dest = incomingmsg[4:6]
+    ip_prot = incomingmsg[7]
+    symbol_position = incomingmsg.find("|")
+    ip_length = incomingmsg[8:symbol_position]
+    ip_msg = incomingmsg[incomingmsg+1:]
+
+    full_ip = ip_source + ip_dest + ip_prot + ip_length + ip_msg
+    
+    #ethernetpacket
+    if ip_dest == 'N1':
+        eth_source = 'R1'
+    else:
+        eth_source = 'R2'
+    eth_dest = incomingmsg[:2]
+    eth_length = len(full_ip)
+    
+    full_eth = eth_source + eth_dest + eth_length + full_ip
+
+    #message sending component
     clientsocket, address = r1.accept()
     clientsocket, address = r2.accept()
     print(f"Connection from {address} has been established.")
@@ -26,26 +54,20 @@ while True:
     r1nodes = ['N1']
     r2nodes = ['N2', 'N3']
     
-    msg = "R1N25Hello"
-    
-    if msg[:2]=="R1":
+    if eth_dest=="R1":
         #check for nodes inside r1nodes
-        if msg[2:4] in r1nodes:
-            clientsocket.send(bytes(msg,"utf-8"))
+        if ip_dest in r1nodes:
+            clientsocket.send(bytes(full_eth,"utf-8"))
         else:
             print("Node does not exist on this route")
 
-    elif msg[:2]=="R2":
+    elif eth_dest=="R2":
         #check for nodes inside r2nodes
-        if msg[2:4] in r2nodes:
-            clientsocket.send(bytes(msg,"utf-8"))
+        if ip_dest in r2nodes:
+            clientsocket.send(bytes(full_eth,"utf-8"))
         else:
             print("Node does not exist on this route")
     else:
         print("This is not a registered route")
 
-    #router needs a message-receiving component
-    # incomingmsg = destroute + destnode + messageinput
-    #need to pack as ip packet, and THEN pack into ethernet frame
-    
     clientsocket.close()

@@ -52,6 +52,7 @@ while True:
 
     elif eth_frame[2:4]=="R2":
         #check for nodes inside r2nodes
+        
         if eth_frame[:2] in r2nodes:
 
             for char in eth_frame:

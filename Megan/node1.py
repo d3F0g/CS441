@@ -28,6 +28,7 @@ while True:
     protocol = input("What would you like to do with the message? 0 to ping, 1 to log and 2 to kill.")
     messageinput = input("Please enter your message.")
     messagelength = len(messageinput)
+    #convert to binary for message length
     fullmsg = destroute + sourcenode + destnode + protocol + messagelength + '|' + messageinput
 
     #need to send this to router

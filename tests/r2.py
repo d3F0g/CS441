@@ -3,7 +3,7 @@ import socket
   
 # next create a socket object  
 s = socket.socket()          
-print ("Socket successfully created") 
+print ("Router 2 successfully created") 
   
 # reserve a port on your computer in our  
 # case it is 12345 but it can be anything  
@@ -15,11 +15,11 @@ port = 12346
 # this makes the server listen to requests  
 # coming from other computers on the network  
 s.bind(('127.0.0.1', port))          
-print ("socket binded to %s" %(port))  
+print ("Router 2 binded to %s" %(port))  
   
 # put the socket into listening mode  
 s.listen(5)      
-print ("socket is listening") 
+print ("Router 2 is listening") 
 
   
 # a forever loop until we interrupt it or  
@@ -31,7 +31,12 @@ while True:
     print ('Got connection from', addr ) 
     
     # send a thank you message to the client.  
-    c.send(b'Thank you for connecting')  
+    c.send(b'Thank you for connecting, message sent!, R2')  
+    data = c.recv(261)
+
+    #if data has been sent to this router
+    if data: 
+        print(data)
     
     # Close the connection with the client  
     c.close() 

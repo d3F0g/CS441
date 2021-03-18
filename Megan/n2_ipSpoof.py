@@ -57,3 +57,5 @@ s.close()
 
 #reference: https://stackoverflow.com/questions/27448905/send-packet-and-change-its-source-ip
 #reference 2: https://github.com/balle/python-network-hacks/blob/master/ip-spoofing.py
+#reference 3: https://stackoverflow.com/questions/38555263/spoofing-ip-address-without-any-external-module-via-python
+#ARP spoofing/poisoning: https://www.tutorialspoint.com/python_penetration_testing/python_penetration_testing_arp_spoofing.htm

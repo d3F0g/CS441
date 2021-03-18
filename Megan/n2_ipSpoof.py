@@ -22,7 +22,21 @@ source = 'N2'
 destination = 'R2'
 ## START of IP frame
 IPsource = 'N2'
-IPdestination = sys.argv[1]
+
+#IP Spoofing
+from scapy.all import send, IP, ICMP
+spoofed_IPsource='N3' #spoofed source IP address: we are N2 pretending to be N3 so as to send to N1
+IPdestination = sys.argv[1] #destination IP address
+sourceport = 12346
+destinationport = 65431
+payload = "this is a message"
+# spoofed_packet = IP(src=spoofed_IPsource, dst=sys.argv[1]) / TCP(sport=sourceport, dport=destinationport) / payload
+spoofed_packet2 = IP(src=spoofed_IPsource, dst=sys.argv[1]) / ICMP() /payload
+answer = send(spoofed_packet2)
+
+if answer:
+    answer.show()
+
 IPprotocol = sys.argv[2]
 IPdata = sys.argv[3]
 IPdatalength = str(len(IPdata))
@@ -41,14 +55,7 @@ print (s.recv(1024) )
 s.close()    
 
 
-# This will recreate the socket object to send to R1 as well
-s = socket.socket() 
-socket_port = 65432
-s.bind(('127.0.0.1', socket_port))
-# connect to r1
-s.connect(('127.0.0.1', 12345)) 
-s.send(bytes(ethernet_frame, encoding='utf8'))
-# receive data from r2  
-print (s.recv(1024) ) 
-# close the connection  
-s.close()  
+#reference: https://stackoverflow.com/questions/27448905/send-packet-and-change-its-source-ip
+#reference 2: https://github.com/balle/python-network-hacks/blob/master/ip-spoofing.py
+#reference 3: https://stackoverflow.com/questions/38555263/spoofing-ip-address-without-any-external-module-via-python
+#ARP spoofing/poisoning: https://www.tutorialspoint.com/python_penetration_testing/python_penetration_testing_arp_spoofing.htm

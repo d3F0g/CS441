@@ -4,22 +4,24 @@ import socket
   
 # Create a socket object  
 s = socket.socket() 
-socket_port = 65431
+socket_port = 65432
 s.bind(('127.0.0.1', socket_port))         
   
+
 if len(sys.argv) != 4:
     print("usage: python3", sys.argv[0], "<dest> <protocol> <message>")
     sys.exit(1)
 
-                 
-# connect to r1 
-s.connect(('127.0.0.1', 12345))  
-
+# Define the port on which you want to connect  
+port = 12346                 
+# connect to r2
+s.connect(('127.0.0.1', port))  
+  
 ### START of Ethernet Frame
-source = 'N1'
-destination = 'R1'
+source = 'N2'
+destination = 'R2'
 ## START of IP frame
-IPsource = 'N1'
+IPsource = 'N2'
 IPdestination = sys.argv[1]
 IPprotocol = sys.argv[2]
 IPdata = sys.argv[3]
@@ -33,20 +35,7 @@ ethernet_frame = source + destination + datalength + '|' + IPframe
 ### END of ethernet frame
 
 s.send(bytes(ethernet_frame, encoding='utf8'))
-# receive data from r1  
-print (s.recv(1024) ) 
-# close the connection  
-s.close()   
-
-
-# This will recreate the socket object to send to R2 as well
-s = socket.socket() 
-socket_port = 65431
-s.bind(('127.0.0.1', socket_port))
-# connect to r2
-s.connect(('127.0.0.1', 12346)) 
-s.send(bytes(ethernet_frame, encoding='utf8'))
 # receive data from r2  
 print (s.recv(1024) ) 
 # close the connection  
-s.close()   
+s.close()    

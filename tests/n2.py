@@ -39,3 +39,16 @@ s.send(bytes(ethernet_frame, encoding='utf8'))
 print (s.recv(1024) ) 
 # close the connection  
 s.close()    
+
+
+# This will recreate the socket object to send to R1 as well
+s = socket.socket() 
+socket_port = 65432
+s.bind(('127.0.0.1', socket_port))
+# connect to r1
+s.connect(('127.0.0.1', 12345)) 
+s.send(bytes(ethernet_frame, encoding='utf8'))
+# receive data from r2  
+print (s.recv(1024) ) 
+# close the connection  
+s.close()  

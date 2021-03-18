@@ -39,7 +39,7 @@ print (s.recv(1024) )
 s.close()   
 
 
-# This will recreate the socket object to send to both R1 and R2 
+# This will recreate the socket object to send to R2 as well
 s = socket.socket() 
 socket_port = 65431
 s.bind(('127.0.0.1', socket_port))

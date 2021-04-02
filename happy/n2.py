@@ -16,10 +16,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sck:
 		raise SystemExit(f"We have failed to connect to host: {args.host} on port: {args.port}, because: {e}")
 
 	while True:
-		msg = input("What do we want to send to the server?: ")
+		dest = input("Which node are you sending to...? ")
+		# protocol = int(input("What protocol is this? [0,1,2] "))
+		msg = input("What msg do you want to send to "+dest +"?: ")+'|'+dest
 		sck.sendall(msg.encode('utf-8'))
 		if msg =='exit':
 			print("Client is saying goodbye!")
 			break
 		data = sck.recv(1024)
-		print(f"The server's response was: {data.decode()}")
+		print(f"Router receipt: {data.decode()}")

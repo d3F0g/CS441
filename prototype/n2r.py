@@ -4,7 +4,7 @@ HOST='127.0.0.1'
 PORT=7772
 server.bind((HOST,PORT))
 server.listen(1)
-print("socket is waiting for client......")
+print("Listening for any responses......")
 connection,address=server.accept()
 print(address," got connected.")
 msg="Welcome"

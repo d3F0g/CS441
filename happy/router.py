@@ -35,8 +35,8 @@ def on_new_client(client, connection):
 		msg = client.recv(1024)
 		if msg.decode() == 'exit':
 			break
-		print("The "+ naming(port) +" said: "+msg.decode())
-		reply = f"You told me: {msg.decode()}"
+		print(naming(port) +" sending packet to "+msg.decode().split('|')[1])
+		reply = msg.decode()
 		client.sendall(reply.encode('utf-8'))
 	print(f"The client from ip: {ip}, and port: {port}, has gracefully diconnected!")
 	client.close()

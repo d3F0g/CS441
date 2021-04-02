@@ -3,8 +3,8 @@ server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 HOST='127.0.0.1'
 PORT=7773
 server.bind((HOST,PORT))
-server.listen(1)
-print("socket is waiting for client......")
+server.listen(5)
+print("Listening for any responses......")
 connection,address=server.accept()
 print(address," got connected.")
 msg="Welcome"

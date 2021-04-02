@@ -2,6 +2,18 @@ import socket
 import argparse
 import threading 
 
+def sendMsg(msg):
+# This will recreate the socket object to send to R1 as well
+	s = socket.socket() 
+	# connect to r1
+	s.connect(('127.0.0.1', 65431)) 
+	s.sendall(msg, encoding='utf8')
+	# receive data from r2  
+	print (s.recv(1024) ) 
+	# close the connection  
+	s.close()  
+
+
 parser = argparse.ArgumentParser(description = "This is the server for the multithreaded socket demo!")
 parser.add_argument('--host', metavar = 'host', type = str, nargs = '?', default = socket.gethostbyname('localhost'))
 parser.add_argument('--port', metavar = 'port', type = int, nargs = '?', default = 9999)
@@ -35,7 +47,17 @@ def on_new_client(client, connection):
 		msg = client.recv(1024)
 		if msg.decode() == 'exit':
 			break
-		print(naming(port) +" sending packet to "+msg.decode().split('|')[1])
+		print(naming(port) +" sending packet to "+msg.decode().split('|')[1][2:4])
+		
+		# router logic
+		if msg.decode().split('|')[1][2:4] == 'N1':
+			#send to N1 the message
+			sendMsg(msg.decode().split('|')[2])
+		# elif msg.decode().split('|')[1][2:4] == 'N2':
+
+		# elif msg.decode().split('|')[1] == 'N1':
+
+
 		reply = msg.decode()
 		client.sendall(reply.encode('utf-8'))
 	print(f"The client from ip: {ip}, and port: {port}, has gracefully diconnected!")

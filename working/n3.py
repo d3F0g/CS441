@@ -42,7 +42,7 @@ def chat_client():
         print 'Unable to connect'
         sys.exit()
      
-    print 'Connected to router. You are N3.'
+    print 'Connected to router. You are N3.\n<dest> <protocol> <message>'
     sys.stdout.write('[Me] '); sys.stdout.flush()
      
     while 1:

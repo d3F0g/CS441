@@ -7,6 +7,9 @@ SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
 
+def onlySeeMsg(data):
+    return data.split('|')[2]
+
 def whoIsWho(portNumber):
     if portNumber==10101:
         return "N1"
@@ -54,13 +57,15 @@ def chat_server():
                         if data.split('|')[1][4]=="0": #if the protocol is ping
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
                                 #then send only to N1
-                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 1)
+                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 1)
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
                                 #then send only to N2
-                                broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
+                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 2)
+                                # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
-                                #then send only to N2
-                                broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
+                                #then send only to N3
+                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 3)
+                                # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
 
                         elif data.split('|')[1][4]=="2": #if the protocol is kill
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
@@ -69,6 +74,9 @@ def chat_server():
                                 killconnection(server_socket, sock, 2)
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
                                 killconnection(server_socket, sock, 3)
+
+                        elif data.split('|')[1][4]=="1": #if the protocol is log
+                            
                             
                         
                     else:

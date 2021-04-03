@@ -1,6 +1,14 @@
 import sys
 import socket
 import select
+from time import gmtime, strftime
+
+def logger(filename, msg):
+    timing = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    f = open(filename, "a")
+    f.write(timing + "\n" + msg)
+    f.close()
+
 
 def frame(whoami, whereto, protocol, msg):
     ### START of Ethernet Frame

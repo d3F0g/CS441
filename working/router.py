@@ -75,8 +75,6 @@ def chat_server():
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
                                 killconnection(server_socket, sock, 3)
 
-                        elif data.split('|')[1][4]=="1": #if the protocol is log
-                            
                             
                         
                     else:

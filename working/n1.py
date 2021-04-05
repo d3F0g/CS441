@@ -1,12 +1,13 @@
 import sys
 import socket
 import select
-from time import gmtime, strftime
+from datetime import datetime
 
 def logger(filename, msg):
-    timing = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     f = open(filename, "a")
-    f.write(timing + "\n" + msg)
+    f.write(dt_string + "\n" + msg)
     f.close()
 
 
@@ -77,6 +78,8 @@ def chat_client():
                 s.send(frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 if msg.split(' ')[1]=="0":
                     sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                elif msg.split(' ')[1]=="1":
+                    logger(msg.split(' ')[0]+'.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 
 if __name__ == "__main__":

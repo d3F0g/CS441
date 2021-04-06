@@ -76,8 +76,13 @@ def chat_client():
                 msg = sys.stdin.readline()
                 s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 if msg.split(' ')[1]=="0":
-                    sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                    if msg.split(' ')[0]=="N2":
+                        pass
+                    else:
+                        sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
+                    if msg.split(' ')[0]=="N1": #N2 receives log packet to N1 as well
+                        logger('N2.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                     logger(msg.split(' ')[0]+'.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 

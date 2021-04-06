@@ -57,15 +57,21 @@ def chat_server():
                         if data.split('|')[1][4]=="0": #if the protocol is ping
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
                                 #then send only to N1
-                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 1)
+                                if data.split('|')[1][:2]=="N3": # N2 sniffs N3 communications
+                                    broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)
+                                else:
+                                    targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 1)
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
                                 #then send only to N2
-                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 2)
+                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 2)
                                 # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
                                 #then send only to N3
-                                targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + onlySeeMsg(data), 3)
-                                # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)  
+                                if data.split('|')[1][:2]=="N2": # N3 packet filter
+                                    pass #N3 does not accept N2 packets with ping protocol
+                                else:
+                                    # targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 3)
+                                    broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data) #N2 sniffs N3 comms 
 
                         elif data.split('|')[1][4]=="2": #if the protocol is kill
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
@@ -73,8 +79,7 @@ def chat_server():
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
                                 killconnection(server_socket, sock, 2)
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
-                                killconnection(server_socket, sock, 3)
-
+                                pass #N3 does not accept kill packets from N1 and N2
                             
                         
                     else:
@@ -83,11 +88,11 @@ def chat_server():
                             SOCKET_LIST.remove(sock)
 
                         # at this stage, no data means probably the connection has been broken
-                        broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
+                        broadcast(server_socket, sock, "Client "+ whoIsWho(addr[1]) +" is offline\n") 
 
                 # exception 
                 except:
-                    broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
+                    broadcast(server_socket, sock, "Client "+ whoIsWho(addr[1]) +" is offline\n")
                     continue
 
     server_socket.close()

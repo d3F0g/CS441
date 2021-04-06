@@ -74,11 +74,20 @@ def chat_client():
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                s.send(frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                if msg.split(' ')[0]=="N1": #this will be N2 impersonating N3 everytime msg is sent to N1
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2])) 
+                else:
+                    s.send(frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 if msg.split(' ')[1]=="0":
-                    sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                    if msg.split(' ')[0]=="N3":
+                        pass
+                    else:
+                        sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
-                    logger(msg.split(' ')[0]+'.txt', frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                    if msg.split(' ')[0]=="N3":
+                        pass
+                    else:
+                        logger(msg.split(' ')[0]+'.txt', frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 
 if __name__ == "__main__":

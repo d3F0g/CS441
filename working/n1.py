@@ -79,6 +79,8 @@ def chat_client():
                 if msg.split(' ')[1]=="0":
                     sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
+                    if msg.split(' ')[0]=="N3": #N2 receives log packet to N3 as well
+                        logger('N2.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                     logger(msg.split(' ')[0]+'.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 

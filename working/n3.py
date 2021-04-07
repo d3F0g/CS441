@@ -51,9 +51,9 @@ def frame(whoami, whereto, protocol, msg):
     return ethernet_frame
  
  
-def chat_client():
+def node_start():
     if(len(sys.argv) < 3) :
-        print 'Usage : python chat_client.py hostname port'
+        print 'Usage : python n3.py hostname port'
         sys.exit()
 
     host = sys.argv[1]
@@ -111,4 +111,4 @@ def chat_client():
 
 if __name__ == "__main__":
 
-    sys.exit(chat_client())
+    sys.exit(node_start())

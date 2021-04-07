@@ -20,7 +20,7 @@ def whoIsWho(portNumber):
         return "N3"
 
 
-def chat_server():
+def router_on():
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -138,4 +138,4 @@ def killconnection(server_socket, sock, clientNumber):
  
 if __name__ == "__main__":
 
-    sys.exit(chat_server())  
+    sys.exit(router_on())  

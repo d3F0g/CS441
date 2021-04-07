@@ -43,7 +43,7 @@ def chat_server():
             if sock == server_socket: 
                 sockfd, addr = server_socket.accept()
                 SOCKET_LIST.append(sockfd)
-                print "Client "+ whoIsWho(addr[1]) +" connected"
+                print whoIsWho(addr[1]) +" connected"
                  
                 broadcast(server_socket, sockfd, whoIsWho(addr[1])+" is online\n")
              
@@ -77,8 +77,10 @@ def chat_server():
                         elif data.split('|')[1][4]=="2": #if the protocol is kill
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
                                 killconnection(server_socket, sock, 1)
+                                print "Connection to N1 closed"
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
                                 killconnection(server_socket, sock, 2)
+                                print "Connection to N2 closed"
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
                                 pass #N3 does not accept kill packets from N1 and N2
                             
@@ -89,11 +91,11 @@ def chat_server():
                             SOCKET_LIST.remove(sock)
 
                         # at this stage, no data means probably the connection has been broken
-                        broadcast(server_socket, sock, "Client "+ whoIsWho(addr[1]) +" is offline\n") 
+                        broadcast(server_socket, sock, whoIsWho(addr[1]) +" is offline\n") 
 
                 # exception 
                 except:
-                    broadcast(server_socket, sock, "Client "+ whoIsWho(addr[1]) +" is offline\n")
+                    broadcast(server_socket, sock, whoIsWho(addr[1]) +" is offline\n")
                     continue
 
     server_socket.close()

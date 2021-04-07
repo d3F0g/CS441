@@ -11,6 +11,25 @@ def logger(filename, msg):
     f.write(dt_string + "\n" + msg)
     f.close()
 
+def peerframe(whoami, whereto, protocol, msg):
+    ### START of Ethernet Frame
+    source = whoami
+    destination = whereto
+    ## START of IP frame
+    IPsource = whoami
+    IPdestination = whereto
+    IPprotocol = protocol
+    IPdata = msg
+    IPdatalength = str(len(IPdata))
+    IPframe = IPsource + IPdestination + IPprotocol + IPdatalength + '|' + IPdata
+    ## END of IP frame
+    datalength = str(len(IPframe)-1)
+
+    #combine them to form the ethernet frame
+    ethernet_frame = source + destination + datalength + '|' + IPframe
+    ### END of ethernet frame
+    return ethernet_frame
+
 
 def frame(whoami, whereto, protocol, msg):
     ### START of Ethernet Frame
@@ -75,7 +94,10 @@ def chat_client():
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                if msg.split(' ')[0]=="N2": #if intended to send to N2 then must be without router dest
+                    s.send(peerframe('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                else:
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 if msg.split(' ')[1]=="0":
                     if msg.split(' ')[0]=="N2":
                         pass

@@ -5,6 +5,7 @@ import select
 from datetime import datetime
 import random
 import string
+import time
 
 def random_string(n): #number of characters for that random string
     chars = string.ascii_letters
@@ -36,7 +37,6 @@ def peerframe(whoami, whereto, protocol, msg):
     ### END of ethernet frame
     return ethernet_frame
 
-
 def frame(whoami, whereto, protocol, msg):
     ### START of Ethernet Frame
     source = whoami
@@ -59,14 +59,14 @@ def frame(whoami, whereto, protocol, msg):
  
 def node_start():
     if(len(sys.argv) < 3) :
-        print 'Usage : python n3.py hostname port'
+        print 'Usage : python n2.py hostname port'
         sys.exit()
 
     host = sys.argv[1]
     port = int(sys.argv[2])
      
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('127.0.0.1', 10103))
+    s.bind(('127.0.0.1', 10104))
     s.settimeout(2)
      
     # connect to remote host
@@ -76,7 +76,7 @@ def node_start():
         print 'Unable to connect'
         sys.exit()
      
-    print 'Connected to router. You are N3.\n<dest> <protocol> <message>'
+    print 'Connected to router. This is the DOS terminal.\nType -->N3 0 t'
     sys.stdout.write('[Me] '); sys.stdout.flush()
      
     while 1:
@@ -95,28 +95,15 @@ def node_start():
                 else :
                     #print data
                     sys.stdout.write(data)
-                    sys.stdout.write('[Me] '); sys.stdout.flush()     
+                    sys.stdout.write('[Me] '); sys.stdout.flush()   
             
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                if msg.split(' ')[0]=="N2": #if intended to send to N2 then must be without router dest
-                    s.send(peerframe('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
-                else:
-                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
-                if msg.split(' ')[1]=="0":
-                    if msg.split(' ')[0]=="N2":
-                        pass
-                    else:
-                        sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
-                elif msg.split(' ')[1]=="1":
-                    if msg.split(' ')[0]=="N1": #N2 receives log packet to N1 as well 
-                        # N2 receives the actual message but twists the msg sent by N3 to N1
-                        logger('N2.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
-                        logger(msg.split(' ')[0]+'.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], (random_string(3)+msg.split(' ')[2]+random_string(5)).replace("\n", "")))
-                    elif msg.split(' ')[0]=="N2":
-                        logger('N2.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
-                    
+                while True: #this will continually broadcast msgs (as N3) until stopped
+                    time.sleep(0.5)
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2].rstrip('\n') +random_string(10)+'\n')) 
+                
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 
 if __name__ == "__main__":

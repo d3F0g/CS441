@@ -18,6 +18,8 @@ def whoIsWho(portNumber):
         return "N2"
     elif portNumber==10103:
         return "N3"
+    elif portNumber==10104:
+        return "N3"
 
 
 def router_on():

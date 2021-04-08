@@ -2,6 +2,14 @@
 import sys
 import socket
 import select
+from datetime import datetime
+
+def logger(filename, msg):
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    f = open(filename, "a")
+    f.write(dt_string + "\n" + msg)
+    f.close()
 
 HOST = '' 
 SOCKET_LIST = []
@@ -19,7 +27,7 @@ def whoIsWho(portNumber):
     elif portNumber==10103:
         return "N3"
     elif portNumber==10104:
-        return "N3"
+        return "N4"
 
 
 def router_on():
@@ -61,7 +69,10 @@ def router_on():
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
                                 #then send only to N1
                                 if data.split('|')[1][:2]=="N3": # N2 sniffs N3 communications
-                                    broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)
+                                    # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data)
+                                    logger('sniffed.txt', data)
+                                    targeted(server_socket, sock, "\r" + '[' + 'N3' + '] ' + data, 1)
+                                    targeted(server_socket, sock, "\r" + '[' + 'reply' + '] ' + onlySeeMsg(data), 3)
                                 else:
                                     targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 1)
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
@@ -73,18 +84,29 @@ def router_on():
                                 if data.split('|')[1][:2]=="N2": # N3 packet filter
                                     pass #N3 does not accept N2 packets with ping protocol
                                 else:
-                                    # targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 3)
-                                    broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data) #N2 sniffs N3 comms 
+                                    logger('sniffed.txt', data)
+                                    targeted(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data, 3)
+                                    # broadcast(server_socket, sock, "\r" + '[' + whoIsWho(sock.getpeername()[1]) + '] ' + data) #N2 sniffs N3 comms 
+                            elif data.split('|')[1][2:4]=="N4": #if the intended recipient is N4
+                                broadcast(server_socket, sock, "\r" + '[' + 'N3' + '] ' + data) #N4 spam DoS
 
                         elif data.split('|')[1][4]=="2": #if the protocol is kill
                             if data.split('|')[1][2:4]=="N1": #if the intended recipient is N1
+                                if data.split('|')[1][:2]=="N3": # if the sender is N3
+                                    logger('sniffed.txt', data)
                                 killconnection(server_socket, sock, 1)
+                                logger('router.txt', "Connection to N1 closed")
                                 print "Connection to N1 closed"
                             elif data.split('|')[1][2:4]=="N2": #if the intended recipient is N2
                                 killconnection(server_socket, sock, 2)
+                                logger('router.txt', "Connection to N2 closed")
                                 print "Connection to N2 closed"
                             elif data.split('|')[1][2:4]=="N3": #if the intended recipient is N3
                                 pass #N3 does not accept kill packets from N1 and N2
+                            elif data.split('|')[1][2:4]=="N4": #if the intended recipient is N4
+                                killconnection(server_socket, sock, 4)
+                                logger('router.txt', "Connection to N4 closed")
+                                print "Connection to N4 closed"
                             
                         
                     else:

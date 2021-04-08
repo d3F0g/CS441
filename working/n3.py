@@ -3,6 +3,7 @@ import sys
 import socket
 import select
 from datetime import datetime
+from helpers import encryptor, decryptor
 import random
 import string
 
@@ -101,19 +102,20 @@ def node_start():
                 # user entered a message
                 msg = sys.stdin.readline()
                 if msg.split(' ')[0]=="N2": #if intended to send to N2 then must be without router dest
-                    s.send(peerframe('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                    s.send(peerframe('N3', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2])))
                 else:
-                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2])))
                 if msg.split(' ')[1]=="0":
                     if msg.split(' ')[0]=="N2":
                         pass
                     else:
-                        sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                        sys.stdout.write('[reply] '+encryptor(msg.split(' ')[2])); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
                     if msg.split(' ')[0]=="N1": #N2 receives log packet to N1 as well 
-                        # N2 receives the actual message but twists the msg sent by N3 to N1
-                        logger('N2.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
-                        logger(msg.split(' ')[0]+'.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], (random_string(3)+msg.split(' ')[2]+random_string(5)).replace("\n", "")))
+                        logger('sniffed.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                        logger('N1.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                        logger('router.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                        # logger(msg.split(' ')[0]+'.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], (random_string(3)+msg.split(' ')[2]+random_string(5)).replace("\n", "")))
                     elif msg.split(' ')[0]=="N2":
                         logger('N2.txt', frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                     

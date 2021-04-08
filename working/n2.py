@@ -3,6 +3,7 @@ import sys
 import socket
 import select
 from datetime import datetime
+from helpers import encryptor, decryptor
 
 def logger(filename, msg):
     now = datetime.now()
@@ -94,18 +95,22 @@ def node_start():
                 # user entered a message
                 msg = sys.stdin.readline()
                 if msg.split(' ')[0]=="N1": #this will be N2 impersonating N3 everytime msg is sent to N1
-                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2])) 
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2]))) 
                 else:
-                    s.send(peerframe('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                    s.send(peerframe('N2', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2])))
                 if msg.split(' ')[1]=="0":
                     if msg.split(' ')[0]=="N3":
                         pass
+                    elif msg.split(' ')[0]=="N1":
+                        # sys.stdout.write('[N1] '+ frame('N1', 'N3', '0', msg.split(' ')[2])); sys.stdout.flush() 
+                        pass
                     else:
-                        sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                        sys.stdout.write('[reply] '+encryptor(msg.split(' ')[2])); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
                     if msg.split(' ')[0]=="N3":
                         pass
                     else:
+                        logger('router.txt', frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                         logger(msg.split(' ')[0]+'.txt', frame('N2', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 

@@ -3,6 +3,7 @@ import sys
 import socket
 import select
 from datetime import datetime
+from helpers import encryptor, decryptor
 
 def logger(filename, msg):
     now = datetime.now()
@@ -69,6 +70,7 @@ def node_start():
                 else :
                     #print data
                     sys.stdout.write(data)
+                    logger('router.txt', data)
                     sys.stdout.write('[Me] '); sys.stdout.flush() 
                         
                         
@@ -76,12 +78,16 @@ def node_start():
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                s.send(frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                #router logs
+                logger('router.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2]))) 
+                #send it
+                s.send(frame('N1', msg.split(' ')[0], msg.split(' ')[1], encryptor(msg.split(' ')[2])))
                 if msg.split(' ')[1]=="0":
-                    sys.stdout.write('[reply] '+msg.split(' ')[2]); sys.stdout.flush() 
+                    sys.stdout.write('[reply] '+encryptor(msg.split(' ')[2])); sys.stdout.flush() 
                 elif msg.split(' ')[1]=="1":
                     if msg.split(' ')[0]=="N3": #N2 receives log packet to N3 as well
-                        logger('N2.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                        logger('sniffed.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
+                    logger('router.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                     logger(msg.split(' ')[0]+'.txt', frame('N1', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2]))
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 

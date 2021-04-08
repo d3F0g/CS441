@@ -76,7 +76,7 @@ def node_start():
         print 'Unable to connect'
         sys.exit()
      
-    print 'Connected to router. This is the DOS terminal.\nType -->N3 0 t'
+    print 'Connected to router. This is the DOS terminal.\nType -->N4 0 t'
     sys.stdout.write('[Me] '); sys.stdout.flush()
      
     while 1:
@@ -102,7 +102,7 @@ def node_start():
                 msg = sys.stdin.readline()
                 while True: #this will continually broadcast msgs (as N3) until stopped
                     time.sleep(0.5)
-                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], msg.split(' ')[2].rstrip('\n') +random_string(10)+'\n')) 
+                    s.send(frame('N3', msg.split(' ')[0], msg.split(' ')[1], (random_string(4)+msg.split(' ')[2]).rstrip('\n') +random_string(10)+'\n')) 
                 
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 

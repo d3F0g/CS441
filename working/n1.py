@@ -47,6 +47,7 @@ def node_start():
     # connect to remote host
     try :
         s.connect((host, port))
+        logger('router.txt', 'N1 is online\n')
     except :
         print 'Unable to connect'
         sys.exit()

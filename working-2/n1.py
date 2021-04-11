@@ -1,10 +1,11 @@
 import sys
 import socket
 import select
+import helpers
  
 def chat_client():
     if(len(sys.argv) < 3) :
-        print('Usage : python chat_client.py hostname port')
+        print('Usage : python n1.py hostname port')
         sys.exit()
 
     host = sys.argv[1]
@@ -21,7 +22,7 @@ def chat_client():
         print('Unable to connect')
         sys.exit()
      
-    print('Connected to router. You can start sending messages')
+    print 'Connected to router. You are N1.\n<dest> <protocol> <message>'
     sys.stdout.write('[Me] '); sys.stdout.flush()
      
     while 1:
@@ -45,7 +46,13 @@ def chat_client():
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                s.send(msg)
+                dest = msg.split(' ')[0]
+                protocol = msg.split(' ')[1]
+                message = msg.split(' ')[2]
+                
+                s.send(helpers.frame('N1', '0x1A', 'R1', dest, protocol, message)) 
+                print '[reply] '+helpers.frame('R1', helpers.node_to_IP(dest), 'N1', "N1", protocol, message)
+
                 sys.stdout.write('[Me] '); sys.stdout.flush() 
 
 if __name__ == "__main__":

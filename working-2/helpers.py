@@ -1,3 +1,8 @@
+import json
+from collections import OrderedDict
+from datetime import datetime
+
+
 def whoIsWho(n):
     if n == 10101:
         return "N1"
@@ -7,21 +12,38 @@ def whoIsWho(n):
         return "N3"
 
 
+def node_to_IP(node):
+    if node == "N1":
+        return "0x1A"
+    elif node == "N2":
+        return "0x2A"
+    elif node == "N3":
+        return "0x2B"
 
-def frame(whoami, router_dest, node_dest, protocol, msg):
+
+def frame(whoami, IPwhoami, router_dest, node_dest, protocol, msg):
     final_frame = {
         "source": whoami,
-        "r_dest": router_dest,
-        "ethernet_datalength": len(router_dest)+len(node_dest)+len(protocol)+len(len(msg))+len(msg)
+        "ethernet_dest": router_dest,
+        #refers to the length of the IP Frame
+        "ethernet_datalength": len(IPwhoami)+len(node_dest)+len(protocol)+len(str(len(msg)))+len(msg),
 
         # START of IP Frame
-        "IPsource": whoami,
-        "IPdest": node_dest,
+        "IPsource": IPwhoami,
+        "IPdest": node_to_IP(node_dest),
         "Protocol": protocol,
         "Datalength": len(msg),
-        "Data": msg
+        "Data": msg.replace('\n', '')
         #END of IP Frame
     }
+    
+    return json.dumps(final_frame, indent=4, sort_keys=True)+'\n'
 
-    return final_frame
+def logger(filename, msg):
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    f = open(filename, "a")
+    f.write(dt_string + "\n" + msg)
+    f.close()
+
 

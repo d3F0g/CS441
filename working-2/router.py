@@ -55,16 +55,19 @@ def chat_server():
                                 spoofed["source"] = "N3"
                                 spoofed["IPsource"] = "0x2B"
                                 print json.dumps(spoofed, indent=4)
+                                helpers.logger("router.txt", json.dumps(spoofed))
                                 #print router forwarded packet
                                 new = json.loads(data, object_pairs_hook=OrderedDict)
                                 new["source"] = "R2"
                                 new["ethernet_dest"] = "R1"
                                 new["IPsource"] = "0x2B"
                                 print json.dumps(new, indent=4)
+                                helpers.logger("router.txt", json.dumps(new))
                                 #print the sent out packet
                                 new["source"] = "R1"
                                 new["ethernet_dest"] = "N1"
                                 print json.dumps(new, indent=4)
+                                helpers.logger("router.txt", json.dumps(new))
                                 #send the packet to N1
                                 converted = json.loads(data, object_pairs_hook=OrderedDict)
                                 converted["source"] = "R1"
@@ -78,6 +81,7 @@ def chat_server():
                                 reply["source"] = "N1"
                                 reply["ethernet_dest"] = "R1"
                                 print json.dumps(reply, indent=4)
+                                helpers.logger("router.txt", json.dumps(reply))
                                 #print router forwarded reply packet
                                 reply_forwarded = json.loads(data, object_pairs_hook=OrderedDict)
                                 reply_forwarded["IPsource"] = "0x1A"
@@ -85,11 +89,13 @@ def chat_server():
                                 reply_forwarded["source"] = "R1"
                                 reply_forwarded["ethernet_dest"] = "R2"
                                 print json.dumps(reply_forwarded, indent=4)
+                                helpers.logger("router.txt", json.dumps(reply_forwarded))
                                 #print sent out reply
                                 reply_forwarded["source"] = "R2"
                                 reply_forwarded["ethernet_dest"] = "N3"
                                 targeted(server_socket, sock, "\r" + '[' + 'reply' + '] ' + json.dumps(reply_forwarded, indent=4)+'\n', 3)
                                 print json.dumps(reply_forwarded, indent=4)
+                                helpers.logger("router.txt", json.dumps(reply_forwarded))
                             
                             #if going to N2
                             elif json.loads(data)["IPdest"] == "0x2A":
@@ -97,15 +103,19 @@ def chat_server():
                                 if json.loads(data)["source"] == "N1":
                                     #print data that arrived
                                     print data
+                                    formatted_str = json.loads(data, object_pairs_hook=OrderedDict)
+                                    helpers.logger("router.txt", json.dumps(formatted_str))
                                     #print router forwarded packet
                                     new = json.loads(data, object_pairs_hook=OrderedDict)
                                     new["source"] = "R1"
                                     new["ethernet_dest"] = "R2"
                                     print json.dumps(new, indent=4)
+                                    helpers.logger("router.txt", json.dumps(new))
                                     #print the sent out packet
                                     new["source"] = "R2"
                                     new["ethernet_dest"] = "N2"
                                     print json.dumps(new, indent=4)
+                                    helpers.logger("router.txt", json.dumps(new))
                                     #send the packet to N2
                                     converted = json.loads(data, object_pairs_hook=OrderedDict)
                                     converted["source"] = "R2"
@@ -117,16 +127,19 @@ def chat_server():
                                     reply["source"] = "N2"
                                     reply["ethernet_dest"] = "R2"
                                     print json.dumps(reply, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply))
                                     #print router forwarded reply packet
                                     reply_forwarded = json.loads(data, object_pairs_hook=OrderedDict)
                                     reply_forwarded["IPsource"], reply_forwarded["IPdest"] = reply_forwarded["IPdest"], reply_forwarded["IPsource"] #swap the IPsource and IPdest values
                                     reply_forwarded["source"] = "R2"
                                     reply_forwarded["ethernet_dest"] = "R1"
                                     print json.dumps(reply_forwarded, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply_forwarded))
                                     #print sent out reply
                                     reply_forwarded["source"] = "R1"
                                     reply_forwarded["ethernet_dest"] = "N1"
                                     print json.dumps(reply_forwarded, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply_forwarded))
                                 #if it came from N3
                                 elif json.loads(data)["source"] == "N3":
                                     targeted(server_socket, sock, "\r" + '[' + helpers.whoIsWho(sock.getpeername()[1]) + '] ' + data, 2)
@@ -137,15 +150,19 @@ def chat_server():
                                 if json.loads(data)["source"] == "N1":
                                     #print data that arrived
                                     print data
+                                    formatted_str = json.loads(data, object_pairs_hook=OrderedDict)
+                                    helpers.logger("router.txt", json.dumps(formatted_str))
                                     #print router forwarded packet
                                     new = json.loads(data, object_pairs_hook=OrderedDict)
                                     new["source"] = "R1"
                                     new["ethernet_dest"] = "R2"
                                     print json.dumps(new, indent=4)
+                                    helpers.logger("router.txt", json.dumps(new))
                                     #print the sent out packet
                                     new["source"] = "R2"
                                     new["ethernet_dest"] = "N3"
                                     print json.dumps(new, indent=4)
+                                    helpers.logger("router.txt", json.dumps(new))
                                     #send the packet to N3
                                     converted = json.loads(data, object_pairs_hook=OrderedDict)
                                     converted["source"] = "R2"
@@ -157,16 +174,19 @@ def chat_server():
                                     reply["source"] = "N3"
                                     reply["ethernet_dest"] = "R2"
                                     print json.dumps(reply, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply))
                                     #print router forwarded reply packet
                                     reply_forwarded = json.loads(data, object_pairs_hook=OrderedDict)
                                     reply_forwarded["IPsource"], reply_forwarded["IPdest"] = reply_forwarded["IPdest"], reply_forwarded["IPsource"] #swap the IPsource and IPdest values
                                     reply_forwarded["source"] = "R2"
                                     reply_forwarded["ethernet_dest"] = "R1"
                                     print json.dumps(reply_forwarded, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply_forwarded))
                                     #print sent out reply
                                     reply_forwarded["source"] = "R1"
                                     reply_forwarded["ethernet_dest"] = "N1"
                                     print json.dumps(reply_forwarded, indent=4)
+                                    helpers.logger("router.txt", json.dumps(reply_forwarded))
                                 #if it came from N2
                                     if json.loads(data)["source"] == "N2":
                                         pass #N3 firewall against N2

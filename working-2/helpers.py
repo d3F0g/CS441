@@ -43,7 +43,7 @@ def logger(filename, msg):
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     f = open(filename, "a")
-    f.write(dt_string + "\n" + msg)
+    f.write(dt_string + "\n" + msg + "\n")
     f.close()
 
 

@@ -54,7 +54,7 @@ def chat_client():
                     # print '[reply] '+helpers.frame('R2', helpers.node_to_IP(dest), 'N2', "N2", protocol, message)
                 else:
                     pass
-                    #basically if its being sent to N3
+                    #basically if its being sent to N3; stopped by firewall
                     # s.send(helpers.frame('N2', '0x2A', '...', dest, protocol, message) ) 
 
                 sys.stdout.write('[Me] '); sys.stdout.flush() 

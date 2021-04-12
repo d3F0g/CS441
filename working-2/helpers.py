@@ -32,7 +32,7 @@ def frame(whoami, IPwhoami, router_dest, node_dest, protocol, msg):
         "IPsource": IPwhoami,
         "IPdest": node_to_IP(node_dest),
         "Protocol": protocol,
-        "Datalength": len(msg),
+        "Datalength": len(msg)-1,
         "Data": msg.replace('\n', '')
         #END of IP Frame
     }

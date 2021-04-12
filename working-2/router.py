@@ -73,7 +73,7 @@ def chat_server():
                                 converted["source"] = "R1"
                                 converted["ethernet_dest"] = "N1"
                                 converted["IPsource"] = "0x2B"
-                                targeted(server_socket, sock, "\r" + '[' + helpers.whoIsWho(sock.getpeername()[1]) + '] ' + json.dumps(converted, indent=4)+'\n', 1)
+                                targeted(server_socket, sock, "\r" + '[' + 'N3' + '] ' + json.dumps(converted, indent=4)+'\n', 1)
                                 #print reply packet
                                 reply = json.loads(data, object_pairs_hook=OrderedDict)
                                 reply["IPsource"] = "0x1A"
@@ -96,6 +96,7 @@ def chat_server():
                                 targeted(server_socket, sock, "\r" + '[' + 'reply' + '] ' + json.dumps(reply_forwarded, indent=4)+'\n', 3)
                                 print json.dumps(reply_forwarded, indent=4)
                                 helpers.logger("router.txt", json.dumps(reply_forwarded))
+                                helpers.logger("sniff_logs.txt", json.dumps(reply_forwarded, indent=4))
                             
                             #if going to N2
                             elif json.loads(data)["IPdest"] == "0x2A":
@@ -175,6 +176,7 @@ def chat_server():
                                     reply["ethernet_dest"] = "R2"
                                     print json.dumps(reply, indent=4)
                                     helpers.logger("router.txt", json.dumps(reply))
+                                    helpers.logger("sniff_logs.txt", json.dumps(reply, indent=4))
                                     #print router forwarded reply packet
                                     reply_forwarded = json.loads(data, object_pairs_hook=OrderedDict)
                                     reply_forwarded["IPsource"], reply_forwarded["IPdest"] = reply_forwarded["IPdest"], reply_forwarded["IPsource"] #swap the IPsource and IPdest values
@@ -190,6 +192,50 @@ def chat_server():
                                 #if it came from N2
                                     if json.loads(data)["source"] == "N2":
                                         pass #N3 firewall against N2
+
+                        elif json.loads(data)["Protocol"] == "1":
+                            formatted_dict = json.loads(data, object_pairs_hook=OrderedDict)
+                            #if going to N1
+                            if json.loads(data)["IPdest"] == "0x1A":
+                                helpers.logger("N1.txt", json.dumps(formatted_dict))
+                                
+
+                            #if going to N2
+                            elif json.loads(data)["IPdest"] == "0x2A":
+                                helpers.logger("N2.txt", json.dumps(formatted_dict))
+
+                            #if going to N3
+                            elif json.loads(data)["IPdest"] == "0x2B":
+                                #if it came from N2 then pass
+                                if json.loads(data)["source"] == "N2":
+                                    pass #N3 firewall against N2 
+                                else:
+                                    helpers.logger("N3.txt", json.dumps(formatted_dict))
+                                    formatted_dict["ethernet_dest"] = "N3"
+                                    formatted_dict["source"] = "R2"
+                                    helpers.logger("sniff_logs.txt", json.dumps(formatted_dict))
+
+
+                        elif json.loads(data)["Protocol"] == "2":
+                            formatted_dict = json.loads(data, object_pairs_hook=OrderedDict)
+                            #if going to N1
+                            if json.loads(data)["IPdest"] == "0x1A":
+                                if json.loads(data)["source"] == "N3":
+                                    helpers.logger('sniff_logs.txt', json.dumps(formatted_dict))
+                                killconnection(server_socket, sock, 1)
+                                helpers.logger('router.txt', json.dumps(formatted_dict))
+                                print 'Connection to N1 closed'
+
+                            #if going to N2
+                            elif json.loads(data)["IPdest"] == "0x2A":
+                                killconnection(server_socket, sock, 2)
+                                helpers.logger('router.txt', json.dumps(formatted_dict))
+                                print 'Connection to N2 closed'
+
+                            #if going to N3
+                            elif json.loads(data)["IPdest"] == "0x2B":
+                                if json.loads(data)["source"] == "N1":
+                                    helpers.logger('sniff_logs.txt', json.dumps(formatted_dict))
 
 
 

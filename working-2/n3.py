@@ -50,8 +50,10 @@ def chat_client():
                 protocol = msg.split(' ')[1]
                 message = msg.split(' ')[2]
                 if dest == 'N1':
-                   s.send(helpers.frame('N3', '0x2B', 'R2', dest, protocol, message)) 
-                   print '[reply] '+helpers.frame('R2', helpers.node_to_IP(dest), 'N3', "N3", protocol, message)
+                    s.send(helpers.frame('N3', '0x2B', 'R2', dest, protocol, message)) 
+                    helpers.logger('sniff_logs.txt', helpers.frame('N3', '0x2B', 'R2', dest, protocol, message))
+                    if protocol == "0":
+                        print '[reply] '+helpers.frame('R2', helpers.node_to_IP(dest), 'N3', "N3", protocol, message)
                 else:
                     #basically if its being sent to N2
                    s.send(helpers.frame('N3', '0x2B', 'N2', dest, protocol, message)) 

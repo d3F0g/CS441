@@ -125,7 +125,8 @@ def chat_server():
                                     #print reply packet
                                     reply = json.loads(data, object_pairs_hook=OrderedDict)
                                     reply["IPsource"], reply["IPdest"] = reply["IPdest"], reply["IPsource"] #swap the IPsource and IPdest values
-                                    reply["source"] = "N2"
+                                    reply["source"] = "N3"
+                                    reply["IPsource"] = "0x2B"
                                     reply["ethernet_dest"] = "R2"
                                     print json.dumps(reply, indent=4)
                                     helpers.logger("router.txt", json.dumps(reply))
@@ -133,11 +134,13 @@ def chat_server():
                                     reply_forwarded = json.loads(data, object_pairs_hook=OrderedDict)
                                     reply_forwarded["IPsource"], reply_forwarded["IPdest"] = reply_forwarded["IPdest"], reply_forwarded["IPsource"] #swap the IPsource and IPdest values
                                     reply_forwarded["source"] = "R2"
+                                    reply_forwarded["IPsource"] = "0x2B"
                                     reply_forwarded["ethernet_dest"] = "R1"
                                     print json.dumps(reply_forwarded, indent=4)
                                     helpers.logger("router.txt", json.dumps(reply_forwarded))
                                     #print sent out reply
                                     reply_forwarded["source"] = "R1"
+                                    reply_forwarded["IPsource"] = "0x2B"
                                     reply_forwarded["ethernet_dest"] = "N1"
                                     print json.dumps(reply_forwarded, indent=4)
                                     helpers.logger("router.txt", json.dumps(reply_forwarded))
@@ -197,11 +200,15 @@ def chat_server():
                             formatted_dict = json.loads(data, object_pairs_hook=OrderedDict)
                             #if going to N1
                             if json.loads(data)["IPdest"] == "0x1A":
+                                formatted_dict["ethernet_dest"] = "N1"
+                                formatted_dict["source"] = "R1"
                                 helpers.logger("N1.txt", json.dumps(formatted_dict))
                                 
 
                             #if going to N2
                             elif json.loads(data)["IPdest"] == "0x2A":
+                                formatted_dict["ethernet_dest"] = "N2"
+                                formatted_dict["source"] = "R2"
                                 helpers.logger("N2.txt", json.dumps(formatted_dict))
 
                             #if going to N3
@@ -209,10 +216,10 @@ def chat_server():
                                 #if it came from N2 then pass
                                 if json.loads(data)["source"] == "N2":
                                     pass #N3 firewall against N2 
-                                else:
-                                    helpers.logger("N3.txt", json.dumps(formatted_dict))
+                                else: 
                                     formatted_dict["ethernet_dest"] = "N3"
                                     formatted_dict["source"] = "R2"
+                                    helpers.logger("N3.txt", json.dumps(formatted_dict))
                                     helpers.logger("sniff_logs.txt", json.dumps(formatted_dict))
 
 
@@ -235,6 +242,8 @@ def chat_server():
                             #if going to N3
                             elif json.loads(data)["IPdest"] == "0x2B":
                                 if json.loads(data)["source"] == "N1":
+                                    formatted_dict["source"] == "R2"
+                                    formatted_dict["ethernet_dest"] == "N3"
                                     helpers.logger('sniff_logs.txt', json.dumps(formatted_dict))
 
 

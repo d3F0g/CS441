@@ -1,4 +1,0 @@
-12/04/2021 21:00:14
-{"Data": "qpple", "Datalength": 5, "IPdest": "0x1A", "IPsource": "0x2A", "Protocol": "1", "ethernet_datalength": 14, "ethernet_dest": "R2", "source": "N2"}
-12/04/2021 21:03:57
-{"Data": "kkk", "Datalength": 3, "IPdest": "0x1A", "IPsource": "0x2B", "Protocol": "1", "ethernet_datalength": 12, "ethernet_dest": "R2", "source": "N3"}

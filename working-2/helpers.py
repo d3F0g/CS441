@@ -47,3 +47,14 @@ def logger(filename, msg):
     f.close()
 
 
+def router_left(dct):
+    dct["source"] = "R2"
+    dct["ethernet_dest"] = "R1"
+    print json.dumps(dct, indent=4) 
+    logger("router.txt", json.dumps(dct))
+
+def router_right(dct):
+    dct["source"] = "R1"
+    dct["ethernet_dest"] = "R2"
+    print json.dumps(dct, indent=4)
+    logger("router.txt", json.dumps(dct))

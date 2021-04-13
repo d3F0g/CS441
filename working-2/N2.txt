@@ -1,4 +1,0 @@
-12/04/2021 20:45:04
-{"Data": "log", "Datalength": 3, "IPdest": "0x2A", "IPsource": "0x1A", "Protocol": "1", "ethernet_datalength": 12, "ethernet_dest": "R1", "source": "N1"}
-12/04/2021 21:05:47
-{"Data": "jnsfkjv", "Datalength": 7, "IPdest": "0x2A", "IPsource": "0x2B", "Protocol": "1", "ethernet_datalength": 16, "ethernet_dest": "N2", "source": "N3"}

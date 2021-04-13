@@ -1,2 +1,0 @@
-12/04/2021 20:47:57
-{"Data": "bigguy", "Datalength": 6, "IPdest": "0x2B", "IPsource": "0x1A", "Protocol": "1", "ethernet_datalength": 15, "ethernet_dest": "R1", "source": "N1"}

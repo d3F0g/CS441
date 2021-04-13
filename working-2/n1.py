@@ -52,7 +52,7 @@ def chat_client():
                 
                 s.send(helpers.frame('N1', '0x1A', 'R1', dest, protocol, message)) 
                 if protocol == "0":
-                    print '[reply] '+helpers.frame('R1', helpers.node_to_IP(dest), 'N1', "N1", protocol, message)
+                    print '[reply] '+helpers.frame('R1', helpers.node_to_IP('N3'), 'N1', "N1", protocol, message)
                     if dest == "N3":
                         helpers.logger('sniff_logs.txt', helpers.frame('R2', '0x1A', 'N3', dest, protocol, message))
 

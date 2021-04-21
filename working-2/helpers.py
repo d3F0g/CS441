@@ -47,6 +47,7 @@ def logger(filename, msg):
     f.close()
 
 
+# shouldnt be having this since the router transforms it automatically
 def router_left(dct):
     dct["source"] = "R2"
     dct["ethernet_dest"] = "R1"
